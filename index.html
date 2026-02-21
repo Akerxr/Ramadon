@@ -5,146 +5,132 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Code of Love ✨</title>
     <style>
-        /* الأساسيات عشان مفيش حاجة تهرب برا الشاشة */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body, html { 
-            height: 100%; width: 100%; 
-            background: #020617; overflow: hidden; 
-            font-family: sans-serif; color: white;
-        }
+        body, html { height: 100%; width: 100%; background: #020617; overflow: hidden; font-family: sans-serif; color: white; }
 
-        /* الخلفية (نجوم) */
-        .bg {
-            position: fixed; inset: 0; z-index: -1;
-            background: radial-gradient(circle at bottom, #0f172a 0%, #020617 100%);
-        }
+        .bg { position: fixed; inset: 0; z-index: -1; background: radial-gradient(circle at bottom, #0f172a 0%, #020617 100%); }
 
-        /* تأثير الدخان عند الانتقال */
-        #magic-smoke {
-            position: fixed; inset: 0; z-index: 1000;
-            background: rgba(255,255,255,0.9);
-            display: none; align-items: center; justify-content: center;
-        }
-
-        /* تنسيق الشاشات */
-        .screen {
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            height: 100vh; width: 100vw;
-            padding: 20px; text-align: center;
-        }
+        .screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; width: 100vw; padding: 20px; text-align: center; }
 
         /* شاشة الباسورد */
-        #page-1 { display: flex; } /* دي اللي بتبدأ شغالة */
+        #page-1 { display: flex; position: absolute; inset: 0; z-index: 10; background: #020617; }
+        .card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid #38bdf8; border-radius: 20px; padding: 30px; width: 90%; max-width: 350px; }
+        input { width: 100%; padding: 12px; margin: 20px 0; border-radius: 10px; border: 1px solid #38bdf8; background: rgba(255,255,255,0.1); color: white; text-align: center; outline: none; }
+        button { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #38bdf8; color: white; font-weight: bold; cursor: pointer; }
 
-        .card {
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid #38bdf8;
-            border-radius: 20px;
-            padding: 30px; width: 90%; max-width: 350px;
-        }
+        /* شاشة المصباح */
+        #page-2 { display: none; flex-direction: column; justify-content: space-around; padding-top: 40px; }
 
-        input {
-            width: 100%; padding: 12px; margin: 20px 0;
-            border-radius: 10px; border: 1px solid #38bdf8;
-            background: rgba(255,255,255,0.1); color: white; text-align: center;
-        }
-
-        button {
-            width: 100%; padding: 12px; border-radius: 10px;
-            border: none; background: #38bdf8; color: white; font-weight: bold;
-        }
-
-        /* شاشة المصباح - مخفية تماماً */
-        #page-2 { display: none; opacity: 0; transition: opacity 0.5s; }
-
-        .genie-img { width: 180px; margin-bottom: 20px; animation: float 3s infinite ease-in-out; }
+        .genie-img { width: 160px; filter: drop-shadow(0 0 10px #38bdf8); animation: float 3s infinite ease-in-out; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
 
-        .lyrics { height: 50px; margin-bottom: 20px; color: #38bdf8; font-weight: bold; font-size: 1.2rem; }
+        /* تنسيق الكلمات (رمادي وتحت بعض) */
+        .lyrics-container { display: flex; flex-direction: column; gap: 8px; margin: 15px 0; }
+        .lyric-line { font-size: 1.1rem; font-weight: bold; color: #4b5563; transition: all 0.5s ease; }
+        .lyric-line.active { color: #38bdf8; text-shadow: 0 0 15px #38bdf8; transform: scale(1.1); }
 
-        .lamp-container { position: relative; width: 200px; touch-action: none; }
-        .lamp-img { width: 100%; filter: drop-shadow(0 0 10px #ffd700); }
+        .lamp-container { position: relative; width: 210px; touch-action: none; margin-bottom: 20px; }
+        .lamp-img { width: 100%; filter: drop-shadow(0 0 15px #ffd700); transition: 0.2s; }
         
-        #smoke-effect {
-            position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%) scale(0);
-            width: 300px; opacity: 0; transition: 1s;
-        }
+        #smoke-effect { position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%) scale(0); width: 350px; opacity: 0; transition: 1.2s; pointer-events: none; }
 
-        #final-msg { display: none; font-size: 1.1rem; border-right: 4px solid #ffd700; padding: 15px; }
+        #final-msg { display: none; font-size: 1.2rem; border-right: 5px solid #ffd700; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 15px; width: 85%; }
     </style>
 </head>
 <body>
 
     <div class="bg"></div>
-    <div id="magic-smoke"><h2 style="color:#020617">✨ جاري السحر...</h2></div>
     <audio id="audio" loop><source src="https://files.catbox.moe/3x0al8.mp3"></audio>
 
     <div id="page-1" class="screen">
         <div class="card">
-            <h2 style="color:#38bdf8">Code of Love</h2>
+            <h2 style="color:#38bdf8; margin-bottom: 5px;">Code of Love</h2>
+            <p style="font-size: 0.8rem; opacity: 0.7;">أدخلي الباسورد لفتح عالمك</p>
             <input type="text" id="pass" placeholder="كلمة السر">
-            <button onclick="startMagic()">دخول ✨</button>
+            <button onclick="unlock()">فتح ✨</button>
         </div>
     </div>
 
     <div id="page-2" class="screen">
         <img src="https://files.catbox.moe/z9lpmv.png" class="genie-img">
         
-        <div class="lyrics" id="lyric-text"></div>
-
-        <div class="lamp-container" id="lamp-box" ontouchmove="rubLamp()">
-            <img src="https://files.catbox.moe/898v62.png" id="lamp-img" class="lamp-img">
-            <img src="https://www.pngarts.com/files/4/Smoke-PNG-Transparent-Image.png" id="smoke-effect">
+        <div class="lyrics-container">
+            <span id="l1" class="lyric-line">ورجعيني لحلاوه البدايات</span>
+            <span id="l2" class="lyric-line">نعيد ونزود الحكايات</span>
+            <span id="l3" class="lyric-line">واشوفها واقفه قدامي</span>
+            <span id="l4" class="lyric-line">وسمعيني صوتها مره كمان</span>
+            <span id="l5" class="lyric-line">جيبيها صدفه في الاحلام</span>
+            <span id="l6" class="lyric-line">واخدها في حضني من تاني</span>
         </div>
 
-        <div id="final-msg">كل سنة وأنتي أجمل حاجة في دنيتي ❤️</div>
+        <div class="lamp-container" id="lamp-box" ontouchmove="startAction()" onmousedown="startAction()">
+            <img src="https://files.catbox.moe/898v62.png" id="lamp-img" class="lamp-img">
+            <img src="https://www.pngarts.com/files/4/Smoke-PNG-Transparent-Image.png" id="smoke-effect">
+            <p id="hint" style="color:#ffd700; font-size: 0.8rem; margin-top: 10px;">ادعكي المصباح لتبدأ الموسيقى 🧞‍♂️</p>
+        </div>
+
+        <div id="final-msg">كل سنة وأنتي أجمل جني في حياتي ❤️</div>
     </div>
 
     <script>
-        function startMagic() {
-            const p = document.getElementById('pass').value;
-            if(!p) return alert("اكتب أي كلمة سر");
-
-            const smoke = document.getElementById('magic-smoke');
-            smoke.style.display = 'flex'; // يظهر دخان الانتقال
-
-            setTimeout(() => {
-                document.getElementById('page-1').style.display = 'none';
-                document.getElementById('page-2').style.display = 'flex';
-                
-                setTimeout(() => {
-                    document.getElementById('page-2').style.opacity = '1';
-                    smoke.style.display = 'none'; // يخفي دخان الانتقال
-                    document.getElementById('audio').play();
-                    startLyrics();
-                }, 100);
-            }, 800);
-        }
-
-        function startLyrics() {
-            const lines = ["ورجعيني لحلاوه البدايات", "نعيد ونزود الحكايات", "واشوفها واقفه قدامي", "وسمعيني صوتها مره كمان"];
-            let i = 0;
-            const target = document.getElementById('lyric-text');
-            setInterval(() => {
-                target.innerText = lines[i];
-                i = (i + 1) % lines.length;
-            }, 4000);
-        }
-
+        let musicStarted = false;
         let rubs = 0;
-        function rubLamp() {
+        let finished = false;
+
+        function unlock() {
+            if(document.getElementById('pass').value === "") return alert("اكتبي الباسورد");
+            document.getElementById('page-1').style.display = 'none';
+            document.getElementById('page-2').style.display = 'flex';
+        }
+
+        // الوظيفة اللي بتبدأ كل حاجة مع أول "دعكة"
+        function startAction() {
+            if(finished) return;
+
+            // تشغيل الأغنية والتايمر مع أول لمسة فقط
+            if(!musicStarted) {
+                musicStarted = true;
+                document.getElementById('audio').play();
+                startLyricsTimer();
+                document.getElementById('hint').innerText = "استمري في الدعك ليظهر السر! ✨";
+            }
+
+            // تأثير الدعك
             rubs++;
-            document.getElementById('lamp-img').style.transform = `rotate(${rubs % 2 === 0 ? 5 : -5}deg)`;
-            if(rubs > 30) {
-                document.getElementById('smoke-effect').style.opacity = '1';
-                document.getElementById('smoke-effect').style.transform = 'translate(-50%, -50%) scale(1.5)';
+            document.getElementById('lamp-img').style.transform = `scale(1.05) rotate(${rubs % 2 === 0 ? 5 : -5}deg)`;
+            
+            // ظهور الرسالة النهائية بعد دعك كتير
+            if(rubs > 40) {
+                finished = true;
+                const smoke = document.getElementById('smoke-effect');
+                smoke.style.opacity = '1';
+                smoke.style.transform = 'translate(-50%, -50%) scale(2)';
                 setTimeout(() => {
                     document.getElementById('lamp-box').style.display = 'none';
+                    document.querySelectorAll('.lyric-line').forEach(l => l.style.display = 'none');
                     document.getElementById('final-msg').style.display = 'block';
-                }, 1000);
+                }, 1200);
             }
+        }
+
+        function startLyricsTimer() {
+            // توقيتات تامر عاشور (بالمللي ثانية)
+            const timings = [1200, 5200, 9500, 13800, 18200, 22500];
+            
+            const run = () => {
+                timings.forEach((ms, index) => {
+                    setTimeout(() => {
+                        if(finished) return;
+                        document.querySelectorAll('.lyric-line').forEach(l => l.classList.remove('active'));
+                        const line = document.getElementById('l' + (index + 1));
+                        if(line) line.classList.add('active');
+                    }, ms);
+                });
+            };
+
+            run();
+            // إعادة التايمر مع إعادة الأغنية (كل 26 ثانية تقريباً)
+            setInterval(run, 26500);
         }
     </script>
 </body>
