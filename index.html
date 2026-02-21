@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Code of Love ✨</title>
+    <style>
+        /* الأساسيات عشان مفيش حاجة تهرب برا الشاشة */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body, html { 
+            height: 100%; width: 100%; 
+            background: #020617; overflow: hidden; 
+            font-family: sans-serif; color: white;
+        }
+
+        /* الخلفية (نجوم) */
+        .bg {
+            position: fixed; inset: 0; z-index: -1;
+            background: radial-gradient(circle at bottom, #0f172a 0%, #020617 100%);
+        }
+
+        /* تأثير الدخان عند الانتقال */
+        #magic-smoke {
+            position: fixed; inset: 0; z-index: 1000;
+            background: rgba(255,255,255,0.9);
+            display: none; align-items: center; justify-content: center;
+        }
+
+        /* تنسيق الشاشات */
+        .screen {
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            height: 100vh; width: 100vw;
+            padding: 20px; text-align: center;
+        }
+
+        /* شاشة الباسورد */
+        #page-1 { display: flex; } /* دي اللي بتبدأ شغالة */
+
+        .card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid #38bdf8;
+            border-radius: 20px;
+            padding: 30px; width: 90%; max-width: 350px;
+        }
+
+        input {
+            width: 100%; padding: 12px; margin: 20px 0;
+            border-radius: 10px; border: 1px solid #38bdf8;
+            background: rgba(255,255,255,0.1); color: white; text-align: center;
+        }
+
+        button {
+            width: 100%; padding: 12px; border-radius: 10px;
+            border: none; background: #38bdf8; color: white; font-weight: bold;
+        }
+
+        /* شاشة المصباح - مخفية تماماً */
+        #page-2 { display: none; opacity: 0; transition: opacity 0.5s; }
+
+        .genie-img { width: 180px; margin-bottom: 20px; animation: float 3s infinite ease-in-out; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+        .lyrics { height: 50px; margin-bottom: 20px; color: #38bdf8; font-weight: bold; font-size: 1.2rem; }
+
+        .lamp-container { position: relative; width: 200px; touch-action: none; }
+        .lamp-img { width: 100%; filter: drop-shadow(0 0 10px #ffd700); }
+        
+        #smoke-effect {
+            position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%) scale(0);
+            width: 300px; opacity: 0; transition: 1s;
+        }
+
+        #final-msg { display: none; font-size: 1.1rem; border-right: 4px solid #ffd700; padding: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="bg"></div>
+    <div id="magic-smoke"><h2 style="color:#020617">✨ جاري السحر...</h2></div>
+    <audio id="audio" loop><source src="https://files.catbox.moe/3x0al8.mp3"></audio>
+
+    <div id="page-1" class="screen">
+        <div class="card">
+            <h2 style="color:#38bdf8">Code of Love</h2>
+            <input type="text" id="pass" placeholder="كلمة السر">
+            <button onclick="startMagic()">دخول ✨</button>
+        </div>
+    </div>
+
+    <div id="page-2" class="screen">
+        <img src="https://files.catbox.moe/z9lpmv.png" class="genie-img">
+        
+        <div class="lyrics" id="lyric-text"></div>
+
+        <div class="lamp-container" id="lamp-box" ontouchmove="rubLamp()">
+            <img src="https://files.catbox.moe/898v62.png" id="lamp-img" class="lamp-img">
+            <img src="https://www.pngarts.com/files/4/Smoke-PNG-Transparent-Image.png" id="smoke-effect">
+        </div>
+
+        <div id="final-msg">كل سنة وأنتي أجمل حاجة في دنيتي ❤️</div>
+    </div>
+
+    <script>
+        function startMagic() {
+            const p = document.getElementById('pass').value;
+            if(!p) return alert("اكتب أي كلمة سر");
+
+            const smoke = document.getElementById('magic-smoke');
+            smoke.style.display = 'flex'; // يظهر دخان الانتقال
+
+            setTimeout(() => {
+                document.getElementById('page-1').style.display = 'none';
+                document.getElementById('page-2').style.display = 'flex';
+                
+                setTimeout(() => {
+                    document.getElementById('page-2').style.opacity = '1';
+                    smoke.style.display = 'none'; // يخفي دخان الانتقال
+                    document.getElementById('audio').play();
+                    startLyrics();
+                }, 100);
+            }, 800);
+        }
+
+        function startLyrics() {
+            const lines = ["ورجعيني لحلاوه البدايات", "نعيد ونزود الحكايات", "واشوفها واقفه قدامي", "وسمعيني صوتها مره كمان"];
+            let i = 0;
+            const target = document.getElementById('lyric-text');
+            setInterval(() => {
+                target.innerText = lines[i];
+                i = (i + 1) % lines.length;
+            }, 4000);
+        }
+
+        let rubs = 0;
+        function rubLamp() {
+            rubs++;
+            document.getElementById('lamp-img').style.transform = `rotate(${rubs % 2 === 0 ? 5 : -5}deg)`;
+            if(rubs > 30) {
+                document.getElementById('smoke-effect').style.opacity = '1';
+                document.getElementById('smoke-effect').style.transform = 'translate(-50%, -50%) scale(1.5)';
+                setTimeout(() => {
+                    document.getElementById('lamp-box').style.display = 'none';
+                    document.getElementById('final-msg').style.display = 'block';
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>
